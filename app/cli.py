@@ -12,7 +12,7 @@ def initialize():
     with get_session() as db: # Get a connection to the database
         drop_all() # delete all tables
         create_db_and_tables() #recreate all tables
-        bob = User('bob', 'bob@mail.com', 'bobpass') # Create a new user (in memory)
+        bob = User(username='bob', email='bob@gmail.com', password='bobpass')
         db.add(bob) # Tell the database about this new data
         db.commit() # Tell the database persist the data
         db.refresh(bob) # Update the user (we use this to get the ID from the db)
@@ -20,8 +20,12 @@ def initialize():
 
 @cli.command()
 def get_user(username:str):
-    # The code for task 5.1 goes here. Once implemented, remove the line below that says "pass"
-    pass
+    with get_session() as db: # Get a connection to the database
+        user = db.exec(select(User).where(User.username == username)).first()
+        if not user:
+            print(f'{username} not found!')
+            return
+        print(user)
 
 @cli.command()
 def get_all_users():
