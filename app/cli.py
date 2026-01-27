@@ -7,6 +7,8 @@ from sqlalchemy.exc import IntegrityError
 
 cli = typer.Typer()
 
+# test
+
 @cli.command()
 def initialize():
     with get_session() as db: # Get a connection to the database
