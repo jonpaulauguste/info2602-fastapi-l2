@@ -9,7 +9,7 @@ cli = typer.Typer()
 
 # test
 
-@cli.command()
+@cli.command(help="Recreate the database and insert a default user (bob).")
 def initialize():
     with get_session() as db: # Get a connection to the database
         drop_all() # delete all tables
@@ -20,7 +20,7 @@ def initialize():
         db.refresh(bob) # Update the user (we use this to get the ID from the db)
         print("Database Initialized")
 
-@cli.command()
+@cli.command(help="Get a user by username.")
 def get_user(username:str):
     with get_session() as db: # Get a connection to the database
         user = db.exec(select(User).where(User.username == username)).first()
@@ -29,7 +29,7 @@ def get_user(username:str):
             return
         print(user)
 
-@cli.command()
+@cli.command(help="Get all users.")
 def get_all_users():
     with get_session() as db:
         all_users = db.exec(select(User)).all()
@@ -40,7 +40,7 @@ def get_all_users():
                 print(user)
 
 
-@cli.command()
+@cli.command(help="Change a user's email.")
 def change_email(username: str, new_email:str):
     with get_session() as db: # Get a connection to the database
         user = db.exec(select(User).where(User.username == username)).first()
@@ -52,7 +52,7 @@ def change_email(username: str, new_email:str):
         db.commit()
         print(f"Updated {user.username}'s email to {user.email}")
 
-@cli.command()
+@cli.command(help="Create a new user.")
 def create_user(username: str, email:str, password: str):
     with get_session() as db: # Get a connection to the database
         newuser = User(username, email, password)
@@ -66,7 +66,7 @@ def create_user(username: str, email:str, password: str):
         else:
             print(newuser) # print the newly created user
 
-@cli.command()
+@cli.command(help="Delete a user by username.")
 def delete_user(username: str):
     with get_session() as db:
         user = db.exec(select(User).where(User.username == username)).first()
@@ -77,7 +77,7 @@ def delete_user(username: str):
         db.commit()
         print(f'{username} deleted')
 
-@cli.command()
+@cli.command(help="Search for users by partial username or email match.")
 def search_user(query: str):
     with get_session() as db:
         users = db.exec(
@@ -95,7 +95,7 @@ def search_user(query: str):
             for user in users:
                 print(user)
 
-@cli.command()
+@cli.command(help="List users with pagination support.")
 def list_users(limit: int = 10, offset: int = 0):
     with get_session() as db:
         users = db.exec(
